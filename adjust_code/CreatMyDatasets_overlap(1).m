@@ -1,105 +1,108 @@
-clc
-clear
-close all;
+import os
+import cv2
+import numpy as np
 
-
-% labelDir = "ac4_seg_daniel";
-% targetDir = "ac4_seg_daniel_bw";
-% prefix = 'ac4_daniel_s';
-% r1=1;r2=100;
-
-%%
-output_size = 256;
-
-labelDir = "ac3_EM";
-targetDir = "ac3_EM_patch_256_overlap";
-prefix = 'Thousand_highmag_256slices_2kcenter_1k_inv_';
-r1=0;r2=255;%注意下标开始的位置
-mkdir(targetDir)%新建文件夹
-
-% labelDir = "ac4_EM";
-% targetDir = "ac4_EM_patch";
-% prefix = 'affinecropped4_inv_';
-% r1=1;r2=100;
-
-%处理原图成小补丁
-for i = r1:r2
-    s = num2str(i*1e-4, '%1.4f');
-    s = s(3:end);
-    s_f = strcat(prefix,s);%就是编写一个文件名
-   
+# break_image_overlap  overlapping patch
+def break_image_overlap(img, output_size=256, overlap=0):
     
-    I = imread(strcat(labelDir,'/',s_f, '.png'));%读了文件名
 
-    %out_eval = double(evalin('base', strcat('break_image(',s_f,',256)')))/255;
-    out = break_image_overlap(I, output_size);%实现把1024*1024大小的图像I转化为output_size*output_size大小的补丁，
-    %(1024/output_size)*(1024/output_size)个补丁，成为output_size*output_size的多个通道所以是多张图片叠在一起
+    h, w = img.shape[:2]
+    patches = []
+    step = output_size  # when no overlap，move output_size
+    for y in range(0, h - output_size + 1, step):
+        for x in range(0, w - output_size + 1, step):
+            patch = img[y:y+output_size, x:x+output_size]
+            patches.append(patch)
+    # output shape (output_size, output_size, N)
+    if len(patches) > 0:
+        out = np.stack(patches, axis=2)
+    else:
+        out = None
+    return out
+
+def get_border(I):
+    # using Canny to decte get_border
+    edges = cv2.Canny(I, 100, 200)
+    # return binary
+    return (edges > 0).astype(np.uint8)
+
+
+
+output_size = 256
+
+labelDir = "ac3_EM"
+targetDir = "ac3_EM_patch_256_overlap"
+prefix = 'Thousand_highmag_256slices_2kcenter_1k_inv_'
+r1=0
+r2=255
+os.makedirs(targetDir, exist_ok=True)
+
+# make it small patches
+for i in range(r1, r2+1):
+
+    # i*1e-4 = 0.0000xxx
+    # format '%1.4f'->'0.00xx'，ie., i=0 -> '0.0000'
+    s_val = i * 1e-4
+    s = f"{s_val:1.4f}"  # '0.0000'
+    s = s[2:]  # remove '0.'
+    # s_f = strcat(prefix,s)
+    s_f = prefix + s
+
+    I = cv2.imread(os.path.join(labelDir, s_f + '.png'), cv2.IMREAD_GRAYSCALE)
+
+    out = break_image_overlap(I, output_size)
+    if out is not None:
+        # out[:,:,patch_j] 在Python中 out.shape = (256,256,N)
+        num_patches = out.shape[2]
+        for patch_j in range(num_patches):
+            filename = os.path.join(targetDir, f"{s}_{patch_j+1}.png")
+            train_data = out[:,:,patch_j]
+            cv2.imwrite(filename, train_data.astype(np.uint8))
+
+
+#--------------------------------------------
+labelDir = "ac3_dbseg_images"
+targetDir = "ac3_dbseg_images_bw_new_256_overlap"
+prefix = 'ac3_daniel_s'
+r1=1
+r2=256
+os.makedirs(targetDir, exist_ok=True)
+
+# label membrane 
+for i in range(r1, r2+1):
+    s_val = i * 1e-4
+    s = f"{s_val:1.4f}"
+    s = s[2:] 
     
-    for patch_j = 1: size(out,3)%size(out,3)是一张图片的补丁数量
-        filename = strcat(targetDir,'/',s,'_',int2str(patch_j), '.png')%根据补丁的序号取名字
-        train_data = out(:,:,patch_j);
-        mask = train_data(:,:,1);
-        train_data = cat(3,train_data,mask);
-        train_data = cat(3,train_data,mask);
-        imwrite(uint8(train_data),filename,'png');%保存补丁为图片
-    end
-    clear(s_f)
-end
+    I = cv2.imread(os.path.join(labelDir, prefix+s+'.png'), cv2.IMREAD_GRAYSCALE)
 
-%%
-
-
-labelDir = "ac3_dbseg_images";
-targetDir = "ac3_dbseg_images_bw_new_256_overlap";
-prefix = 'ac3_daniel_s';
-r1=1;r2=256;%注意下标开始的位置
-mkdir(targetDir)
-%处理细胞膜的标记图成为只是细胞膜的图
-for i = r1:r2
-    s = num2str(i*1e-4, '%1.4f');
-    s = s(3:end);
-
-    I = imread(strcat(labelDir,'/',strcat(prefix,s), '.png'));
-
-    s = r2 - str2num(s);%因为是逆序的
+    # s = r2 - str2num(s)  => in Python:
+    s_float = float(s)
+    s_float = r2 - s_float
+    # refomated 1e-4
+    s_val2 = s_float * 1e-4
+    s2 = f"{s_val2:1.4f}"
+    s2 = s2[2:]  # again strip
     
-    s = num2str(s*1e-4, '%1.4f');
-    s = s(3:end);
-%     
-    out = get_border(I);
-
-%     disp(s)
-    filename = strcat(targetDir,'/',  strcat(prefix,s) , '.png')
-    imwrite(uint8(out)*255,filename,'png');
-    
- 
-end
-%%
-
-labelDir = "ac3_dbseg_images_bw_new_256_overlap";
-targetDir = "ac3_dbseg_images_bw_patch_new_256_overlap";
-prefix = 'ac3_daniel_s';
-r1=0;r2=255;
-mkdir(targetDir)
-%处理细胞膜图成为补丁
-% labelDir = "ac4_seg_daniel_bw";
-% targetDir = "ac4_seg_daniel_bw_patch";
-% prefix = 'ac4_daniel_s';
-% r1=0;r2=99;
+    out = get_border(I)
+    filename = os.path.join(targetDir, prefix + s2 + '.png')
+    cv2.imwrite(filename, (out*255).astype(np.uint8))
 
 
-for i = r1:r2
+#--------------------------------------------
+labelDir = "ac3_dbseg_images_bw_new_256_overlap"
+targetDir = "ac3_dbseg_images_bw_patch_new_256_overlap"
+prefix = 'ac3_daniel_s'
+r1=0
+r2=255
+os.makedirs(targetDir, exist_ok=True)
 
-    I = imread(fullfile(labelDir,sprintf('%s%04d.png',prefix,i)));
-
-    out = break_image_overlap(I,output_size); % break_image(eval(s_f),256);
-    for patch_j = 1: size(out,3)
-        filename = strcat(targetDir,'/',sprintf('%04d',i),'_',int2str(patch_j), '.png')
-        imwrite(out(:,:,patch_j),filename,'png');
-    end
-   
-end
-
-
-
-
+for i in range(r1, r2+1):
+    filename_in = os.path.join(labelDir, f"{prefix}{i:04d}.png")
+    I = cv2.imread(filename_in, cv2.IMREAD_GRAYSCALE)
+    out = break_image_overlap(I, output_size)
+    if out is not None:
+        num_patches = out.shape[2]
+        for patch_j in range(num_patches):
+            filename_out = os.path.join(targetDir, f"{i:04d}_{patch_j+1}.png")
+            cv2.imwrite(filename_out, out[:,:,patch_j])
