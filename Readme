@@ -1,1 +1,114 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+
+\title{Membrane Segmentation Project}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Project Structure}
+The project consists of multiple folders, each containing specific files and functionalities:
+\begin{itemize}
+\item \textbf{DeepLabNet}: Contains scripts and pre-trained models for DeepLab.
+\item \textbf{MembraneSegmentation}: Contains extracted and organized files for creating datasets and training segmentation models.
+\item \textbf{MembraneSegmentationModify}: Improved version of the segmentation pipeline with enhanced accuracy.
+\item \textbf{MyNet}: Includes custom-trained models and results.
+\item \textbf{UNet}: Contains scripts and outputs related to UNet segmentation.
+\item \textbf{adjust_code}: Placeholder for additional modifications or adjustments.
+\end{itemize}
+
+\section*{MembraneSegmentation Folder}
+Based on the files provided by the teacher, I extracted the parts useful for my current work and organized them into the \texttt{MembraneSegmentation} folder.
+
+\subsection*{How to Use}
+\begin{enumerate}
+\item \textbf{Create Training and Validation Sets}:
+\begin{itemize}
+\item Run \texttt{CreatDatasets.py} to generate training and validation datasets.
+\end{itemize}
+\item \textbf{Train Models}:
+\begin{itemize}
+\item Run \texttt{MainDeepLab.py} or \texttt{UnetMain.py} to train the respective models.
+\end{itemize}
+\item \textbf{Training Accuracy}:
+\begin{itemize}
+\item The UNet model achieves approximately \textbf{91%} accuracy on the validation set.
+\item The DeepLab model achieves approximately \textbf{86%} accuracy on the validation set.
+\end{itemize}
+\item \textbf{Training Logs}:
+\begin{itemize}
+\item Training logs are stored in files:
+\begin{itemize}
+\item \texttt{Unet_train_log_batchsize_2.txt}
+\item \texttt{Unet_train_log_batchsize_4.txt}
+\item \texttt{deeplab_train_log_batchsize_4.txt}
+\end{itemize}
+\item These logs can be found in the \texttt{MembraneSegmentation} folder.
+\end{itemize}
+\item \textbf{Make Predictions}:
+\begin{itemize}
+\item Run \texttt{pred_deeplab.py} or \texttt{pred_unet.py} to predict the cell membrane on the test set.
+\end{itemize}
+\end{enumerate}
+
+Additionally, the folder contains example EM data, membrane data, and segmentation data:
+\begin{itemize}
+\item \texttt{ac3_EM}
+\item \texttt{ac3_dbseg_images}
+\item \texttt{ac4_EM}
+\item \texttt{ac4_seg_daniel}
+\end{itemize}
+
+\section*{MembraneSegmentationModify Folder}
+This folder contains improvements made to the original \texttt{MembraneSegmentation} pipeline based on the reference program. After several parameter adjustments:
+\begin{itemize}
+\item The initial validation accuracy of \textbf{81%} was improved to approximately \textbf{90%}.
+\item Significant enhancements were achieved in the experimental results.
+\end{itemize}
+
+\subsection*{How to Use}
+\begin{enumerate}
+\item \textbf{Create Training and Validation Sets}:
+\begin{itemize}
+\item Run \texttt{CreatMyDatasets.py} to generate training and validation datasets.
+\end{itemize}
+\item \textbf{Train Models}:
+\begin{itemize}
+\item Run \texttt{TrainMyNetModify.py} to train the improved models.
+\item Adjust parameters to optimize validation set accuracy.
+\end{itemize}
+\item \textbf{Training Logs}:
+\begin{itemize}
+\item Select logs with better validation accuracy and store them in \texttt{MyNet_train_log.txt}.
+\item The file \texttt{MyNet_train_log.txt} is located in the \texttt{MembraneSegmentationModify} folder.
+\end{itemize}
+\item \textbf{Make Predictions}:
+\begin{itemize}
+\item Run \texttt{predMyNet.py} to predict the cell membrane on the test set.
+\end{itemize}
+\end{enumerate}
+
+Additionally, the folder contains corresponding EM data, membrane data, and segmentation data:
+\begin{itemize}
+\item \texttt{ac3_EM}
+\item \texttt{ac3_dbseg_images}
+\item \texttt{ac4_EM}
+\item \texttt{ac4_seg_daniel}
+\end{itemize}
+
+\section*{Summary}
+This project showcases multiple segmentation approaches (DeepLab and UNet) for cell membrane detection. It includes:
+\begin{itemize}
+\item Original implementations.
+\item Improved pipelines with enhanced accuracy.
+\item Comprehensive training and testing instructions.
+\end{itemize}
+
+Feel free to explore and use the provided scripts and models for your own segmentation tasks!
+
+\end{document}
 
