@@ -9,7 +9,7 @@ The project consists of multiple folders, each containing specific files and fun
 - **UNet**: Contains scripts and outputs related to UNet segmentation.
 - **adjust_code**: Placeholder for additional modifications or adjustments.
 
-## Segmentation Folder
+## Membrane-Segmentation Folder
 Based on the files provided by the teacher, I extracted the parts useful for my current work and organized them into the `MembraneSegmentation` folder.
 
 ### How to Use
@@ -30,7 +30,7 @@ Based on the files provided by the teacher, I extracted the parts useful for my 
    - Run `pred_deeplab.py` or `pred_unet.py` to predict the cell membrane on the test set.
    
 
-## SegmentationModify Folder
+## Membrane-SegmentationModify Folder
 This folder contains improvements made to the original `MembraneSegmentation` pipeline based on the reference program. After several parameter adjustments:
 
 - The initial validation accuracy of **81%** was improved to approximately **90%**.
