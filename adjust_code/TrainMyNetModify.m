@@ -98,7 +98,6 @@ val_dataset = data_generator(val_image_paths, val_label_paths, batch_size)
 # - We add ASPP (Atrous Spatial Pyramid Pooling) on top of the backbone.
 # - Then we add the Deeplabv3+ decoder.
 #
-# Note: For simplicity, no pretrained weights are loaded. In a real scenario,
 # load pretrained ResNet weights and ensure proper alignment with BN layers.
 ##############################################
 
