@@ -28,12 +28,7 @@ Based on the files provided by the teacher, I extracted the parts useful for my 
    - These logs can be found in the `MembraneSegmentation` folder.
 5. **Make Predictions**:
    - Run `pred_deeplab.py` or `pred_unet.py` to predict the cell membrane on the test set.
-
-Additionally, the folder contains example EM data, membrane data, and segmentation data:
-- `ac3_EM`
-- `ac3_dbseg_images`
-- `ac4_EM`
-- `ac4_seg_daniel`
+   
 
 ## SegmentationModify Folder
 This folder contains improvements made to the original `MembraneSegmentation` pipeline based on the reference program. After several parameter adjustments:
