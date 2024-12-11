@@ -57,7 +57,6 @@ for im in range(s[2]):
             score[j*chunk_size:(j+1)*chunk_size, k*chunk_size:(k+1)*chunk_size, im] = result_score
 
 # Convert class indices to pixel values
-# Adjust mapping according to your class definitions:
 Y_pred_a = np.zeros_like(Y_pred, dtype=np.uint8)
 Y_pred_a[Y_pred == 0] = 0
 Y_pred_a[Y_pred == 1] = 255
