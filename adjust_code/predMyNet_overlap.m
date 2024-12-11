@@ -20,9 +20,8 @@ Y_pred = np.zeros(s, dtype=np.uint8)
 score = np.zeros((chunk_size, chunk_size, s[2]), dtype=np.float32)
 
 def semanticseg(patch, model):
-    # patch: (chunk_size, chunk_size), assume single-channel grayscale or need expand dims
-    # Convert patch to the correct input shape:
-    # If model expects (H,W,Channels), ensure patch has that shape
+    # patch: (chunk_size, chunk_size)
+
     if patch.ndim == 2:
         patch = np.expand_dims(patch, axis=-1)
     patch = patch.astype(np.float32)/255.0
